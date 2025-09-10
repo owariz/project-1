@@ -1,0 +1,59 @@
+name: Bun CI Build & Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 🧾 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🧪 Validate tag format (must be vX.Y.Z)
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME:-${GITHUB_REF##refs/tags/}}"
+          if ! echo "$TAG_NAME" | grep -Eq "^v[0-9]+\.[0-9]+\.[0-9]+$"; then
+            echo "❌ Invalid tag format: '$TAG_NAME'. Must be like v1.2.3"
+            exit 1
+          fi
+
+      - name: 🔧 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: 🛠️ Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🧹 Build Bun project
+        run: bun run build
+
+      - name: 🔐 Login GitHub Container Registry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo $GITHUB_TOKEN | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: 🛠️ Build Docker image
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/}
+          IMAGE_NAME=ghcr.io/${{ github.repository }}
+          docker build . -t ${IMAGE_NAME}:${TAG_VERSION}
+          docker tag ${IMAGE_NAME}:${TAG_VERSION} ${IMAGE_NAME}:latest
+
+      - name: 📤 Push Docker Image to GHCR
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/}
+          IMAGE_NAME=ghcr.io/${{ github.repository }}
+          docker push ${IMAGE_NAME}:${TAG_VERSION}
+          docker push ${IMAGE_NAME}:latest
+
+      - name: 🔎 Verify Docker Image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}
+          docker images | grep "${IMAGE_NAME}"
