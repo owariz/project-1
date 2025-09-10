@@ -1,59 +1,80 @@
 import mongoose, { ConnectOptions } from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI as string;
-// if (!MONGO_URI) throw new Error("MONGO_URI environment variable is not set.");
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) throw new Error("❌ MONGO_URI environment variable is not set.");
 
-let isConnecting: Promise<typeof mongoose> | null = null;
+// cache connection สำหรับ serverless (Next.js, Vercel, etc.)
+let globalWithMongoose = global as typeof global & {
+    mongooseConn?: typeof mongoose;
+    mongoosePromise?: Promise<typeof mongoose>;
+};
+
 let handlersAttached = false;
 
 const options: ConnectOptions = {
     serverSelectionTimeoutMS: 10_000, // 10s
     socketTimeoutMS: 45_000, // 45s
+    maxPoolSize: 10, // ป้องกัน connection leak
 };
 
 function attachEventHandlers() {
     if (handlersAttached) return;
-    mongoose.connection.once("open", () => console.log("✅ MongoDB connected"));
-    mongoose.connection.on("error", (err) => console.error("❌ MongoDB error:", err));
-    mongoose.connection.on("disconnected", () => console.warn("⚠️ MongoDB disconnected"));
+
+    mongoose.connection.on("connected", () =>
+        console.log("✅ MongoDB connected")
+    );
+    mongoose.connection.on("error", (err) =>
+        console.error("❌ MongoDB error:", err)
+    );
+    mongoose.connection.on("disconnected", () =>
+        console.warn("⚠️ MongoDB disconnected")
+    );
+
+    // handle SIGINT (Ctrl+C) gracefully
+    if (typeof process !== "undefined") {
+        process.on("SIGINT", async () => {
+            await mongoose.disconnect();
+            console.log("🛑 MongoDB disconnected due to app termination");
+            process.exit(0);
+        });
+    }
+
     handlersAttached = true;
 }
 
-/**
- * Connect to MongoDB safely (idempotent)
- */
 export async function connect(): Promise<typeof mongoose> {
-    const state = mongoose.connection.readyState; // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+    if (globalWithMongoose.mongooseConn) return globalWithMongoose.mongooseConn;
 
-    if (state === 1) return mongoose;
-    if (state === 2 && isConnecting) return isConnecting;
+    if (!globalWithMongoose.mongoosePromise) {
+        attachEventHandlers();
 
-    attachEventHandlers();
-
-    isConnecting = mongoose.connect(MONGO_URI, options);
-    try {
-        await isConnecting;
-    } finally {
-        isConnecting = null; // allow retry if failed
+        mongoose.set("strictQuery", false); // recommended by Mongo team
+        globalWithMongoose.mongoosePromise = mongoose
+        .connect(MONGO_URI as string, options)
+        .then((mongooseInstance) => {
+            globalWithMongoose.mongooseConn = mongooseInstance;
+            return mongooseInstance;
+        })
+        .catch((err) => {
+            globalWithMongoose.mongoosePromise = undefined; // allow retry
+            throw err;
+        });
     }
-    return mongoose;
+
+    return globalWithMongoose.mongoosePromise;
 }
 
-/**
- * Disconnect from MongoDB
- */
 export async function disconnect(): Promise<void> {
-    const state = mongoose.connection.readyState;
-    if (state === 0) return; // already disconnected
+    if (!globalWithMongoose.mongooseConn) return;
 
-    if (state === 1 || state === 2 || state === 3) {
-        try {
-            await mongoose.disconnect();
-            console.log("✅ MongoDB disconnected");
-        } catch (err) {
-            console.error("❌ MongoDB disconnect error:", err);
-            throw err;
-        }
+    try {
+        await mongoose.disconnect();
+        globalWithMongoose.mongooseConn = undefined;
+        globalWithMongoose.mongoosePromise = undefined;
+        console.log("✅ MongoDB disconnected");
+    } catch (err) {
+        console.error("❌ MongoDB disconnect error:", err);
+        throw err;
     }
 }
 

@@ -33,9 +33,7 @@ export const RegisterForm = ({ handleSubmit, loading }: Props) => {
                 errorMessage="กรุณากรอกรหัสผ่าน"
             />
 
-            <Button type="submit" color="primary" isLoading={loading}>
-                สมัครสมาชิก
-            </Button>
+            <Button type="submit" color="warning" isLoading={loading} className="w-full">สมัครสมาชิก</Button>
 
             <hr className="text-gray-200" />
             <p className="text-center text-sm text-gray-600">

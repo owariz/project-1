@@ -40,7 +40,7 @@ interface DesktopSidebarProps {
 }
 
 const DesktopSidebar = ({ className = "", pathname, user }: DesktopSidebarProps) => (
-  <Card shadow="none" className={`w-64 h-full min-h-screen border border-gray-200 rounded-2xl hidden lg:flex flex-col mt-4 ${className}`}>
+  <Card shadow="none" className={`w-64 h-full border border-gray-200 rounded-2xl hidden lg:flex flex-col mt-4 ${className}`}>
     <CardBody className="p-0 flex flex-col flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
 
       {/* Menu */}

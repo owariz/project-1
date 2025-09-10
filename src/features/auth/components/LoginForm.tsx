@@ -25,13 +25,11 @@ export const LoginForm = ({ handleSubmit, loading }: Props) => {
                 isRequired
             />
 
-            <Button type="submit" color="primary" isLoading={loading}>
-                เข้าสู่ระบบ
-            </Button>
+            <Button type="submit" color="primary" isLoading={loading} className="w-full">เข้าสู่ระบบ</Button>
 
             <hr className="text-gray-200" />
             <p className="text-center text-sm text-gray-600">
-                หากยังไม่มีบัญชี
+                หากยังไม่มีบัญชี{" "}
                 <Link href={"/auth/register"} className="text-blue-400">
                     สมัครสมาชิก
                 </Link>
