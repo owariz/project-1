@@ -1,8 +1,9 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
-import { Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 
-// import { GuestLayoutClient } from "@/features";
 import { APP_CONFIG } from "@/config";
+import Loading from "./loading";
 
 export const metadata: Metadata = {
     title: APP_CONFIG.name,
@@ -17,7 +18,9 @@ export default function GuestLayout({ children }: Readonly<{ children: React.Rea
     return (
         <>
             <Toaster />
-            {children}
+            <Suspense fallback={<Loading />}>
+                {children}
+            </Suspense>
         </>
     );
 }

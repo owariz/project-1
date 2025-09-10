@@ -8,9 +8,10 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get("token")?.value;
     const url = request.nextUrl.clone();
     const isAuthPage = url.pathname.startsWith("/auth");
+    const isErrorPage = url.pathname.startsWith("/error");
 
     if (!token) {
-        if (isAuthPage) return NextResponse.next();
+        if (isAuthPage || isErrorPage) return NextResponse.next();
 
         const response = NextResponse.redirect(new URL("/auth/login", request.url));
         response.cookies.delete("token");
@@ -18,8 +19,9 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
+        await jwtVerify(token, JWT_SECRET);
 
+        // ถ้ามี token แต่ user ดันเข้า /auth -> redirect ไปหน้าแรก
         if (isAuthPage) {
             url.pathname = "/";
             return NextResponse.redirect(url);
@@ -27,12 +29,15 @@ export async function middleware(request: NextRequest) {
 
         return NextResponse.next();
     } catch {
+        if (isAuthPage || isErrorPage) return NextResponse.next();
+
         url.pathname = "/error";
         url.searchParams.set("status", "invalid_token");
         return NextResponse.redirect(url);
     }
 }
 
+// 🛡️ exclude /auth/* ออกจาก matcher ไปเลย
 export const config = {
-    matcher: ["/((?!_next|favicon.ico|assets).*)"],
+    matcher: ["/((?!_next|favicon.ico|assets|auth|error).*)"],
 };

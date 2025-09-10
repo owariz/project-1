@@ -17,26 +17,22 @@ export const metadata: Metadata = {
     category: "Internal Tools",
 };
 
-export default async function LayoutWrapper({ children }: { children: React.ReactNode }) {
+export default async function MemberLayout({ children }: { children: React.ReactNode }) {
     const user = await getUser();
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
             <Toaster />
 
-            {/* Navbar: full width */}
             <header className="top-0 z-30">
                 <Navbar user={user} />
             </header>
 
-            {/* Sidebar + Content */}
             <div className="flex flex-col lg:flex-row flex-1">
-                {/* Sidebar ขยับอยู่บน mobile, ซ้ายบน desktop */}
                 <aside className="lg:w-64 px-4 sm:px-6 lg:px-8 flex-shrink-0">
                     <Sidebar user={user} />
                 </aside>
 
-                {/* Main content */}
                 <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                     <div className="container mx-auto">
                         {children}
@@ -44,7 +40,6 @@ export default async function LayoutWrapper({ children }: { children: React.Reac
                 </main>
             </div>
 
-            {/* Footer */}
             <Footer />
         </div>
     );
