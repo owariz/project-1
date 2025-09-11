@@ -1,6 +1,6 @@
 import mongoose, { ConnectOptions } from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI as string;
 if (!MONGO_URI) throw new Error("❌ MONGO_URI environment variable is not set.");
 
 // cache connection สำหรับ serverless (Next.js, Vercel, etc.)
