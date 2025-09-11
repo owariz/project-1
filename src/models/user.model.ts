@@ -29,7 +29,7 @@ const UserSchema = new Schema<User>(
     isBanner: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export const UserModel = models.User || model<User>('User', UserSchema);
