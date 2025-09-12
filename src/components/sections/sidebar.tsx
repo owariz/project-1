@@ -22,6 +22,9 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { label: "หน้าหลัก", href: "/", icon: <LinkIcon className="w-5 h-5" /> },
   { label: "เพิ่มข้อมูลพลาสติก", href: "/plastics/add", icon: <LinkIcon className="w-5 h-5" /> },
+  { label: "ใบมอบหมาย", href: "/assignment", icon: <LinkIcon className="w-5 h-5" /> },
+  { label: "ผู้ตรวจ", href: "/inspector", icon: <LinkIcon className="w-5 h-5" /> },
+  { label: "ผู้จัดทำ", href: "/creator", icon: <LinkIcon className="w-5 h-5" /> },
 ];
 
 export function Sidebar({ className = "", user }: SidebarProps) {
