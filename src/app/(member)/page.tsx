@@ -20,7 +20,7 @@ export default async function Home() {
                     <Link href={`/plastics/${p._id}`} key={index} className="no-underline">
                         <Card shadow="none" className="border border-gray-200 hover:shadow-sm transition">
                             <CardBody className="space-y-3">
-                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full font-bold ${p.color}`}>
+                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full font-bold text-white ${p.color}`}>
                                     {p.recycle}
                                 </div>
                                 <div>

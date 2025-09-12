@@ -20,7 +20,8 @@ interface MenuItem {
 
 // Menu config
 const menuItems: MenuItem[] = [
-  { label: "Home", href: "/", icon: <LinkIcon className="w-5 h-5" /> },
+  { label: "หน้าหลัก", href: "/", icon: <LinkIcon className="w-5 h-5" /> },
+  { label: "เพิ่มข้อมูลพลาสติก", href: "/plastics/add", icon: <LinkIcon className="w-5 h-5" /> },
 ];
 
 export function Sidebar({ className = "", user }: SidebarProps) {
