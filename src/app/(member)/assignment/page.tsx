@@ -1,7 +1,5 @@
 "use client"
 
-import React from "react"
-
 export default function Assignment() {
   return (
     <div className="w-full h-screen p-4">
@@ -13,11 +11,6 @@ export default function Assignment() {
           src="/111.pdf" // ✅ เอาไฟล์ไปวางใน public/ เช่น public/sample.pdf
           className="w-full h-full"
         />
-
-        {/* วิธี 2: object (ใช้แทน iframe ได้เหมือนกัน) */}
-        {/* <object data="/sample.pdf" type="application/pdf" className="w-full h-full">
-          <p>ไม่สามารถแสดง PDF ได้ <a href="/sample.pdf" className="text-blue-500">กดที่นี่เพื่อดาวน์โหลด</a></p>
-        </object> */}
       </div>
     </div>
   )
