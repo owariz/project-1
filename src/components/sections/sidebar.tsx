@@ -52,7 +52,7 @@ const DesktopSidebar = ({ className = "", pathname, user }: DesktopSidebarProps)
         {menuItems.map((item) => {
           const isActive = !item.external && pathname === item.href;
           const buttonClasses = isActive
-            ? "bg-orange-400 text-white"
+            ? "bg-green-400 text-white"
             : "text-gray-700 hover:bg-gradient-to-r hover:from-teal-100 hover:to-purple-100";
 
           return item.external ? (

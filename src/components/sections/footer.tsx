@@ -14,7 +14,7 @@ export const Footer = () => {
                     <CardBody>
                         <div className="flex flex-row justify-between items-center">
                             <p className="text-sm">
-                                &copy; {currentYear} varizz.site — ทำด้วย ❤️ โดย <Link href={"/"} className="hover:text-blue-600 transition-colors text-sm">{APP_CONFIG.name}</Link>
+                                &copy; {currentYear} jimmy.varizz.site — ทำด้วย ❤️ โดย <Link href={"/"} className="hover:text-blue-600 transition-colors text-sm">{APP_CONFIG.name}</Link>
                             </p>
 
                             <div className="flex space-x-4 mt-2 sm:mt-0">

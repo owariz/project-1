@@ -6,10 +6,10 @@ import { Card, CardBody, CardHeader } from "@heroui/card"
 export default function Creator() {
     // ข้อมูลผู้จัดทำ
     const creator = {
-        name: "พาณิชย์ ทัพวร",
+        name: "สถาพร ปานจันทร์",
         role: "Developer",
-        email: "panitthapwon@gmail.com",
-        avatar: "profile.jpg", // วางไฟล์รูปไว้ public/avatars/
+        email: "moop2588@gmail.com",
+        avatar: "profile1.jpg", // วางไฟล์รูปไว้ public/avatars/
     }
 
     return (

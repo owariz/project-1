@@ -7,7 +7,7 @@ export const ENV = {
 
 // App configuration
 export const APP_CONFIG = {
-    name: "XCopTech",
+    name: "jimmy",
     version: "1.0.0",
     description: "Your innovative technology solutions partner",
     url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
